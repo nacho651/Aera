@@ -48,7 +48,7 @@ const saveLastSearch = (search) => {
       }),
     );
   } catch {
-    // Local storage is optional and should not block booking flow.
+    // Local storage is optional.
   }
 };
 
@@ -78,9 +78,8 @@ const makeBookingReference = () => {
   return ref;
 };
 
-const maskCardNumber = (number) => {
-  const digits = (number || '').replace(/\D/g, '');
-  if (!digits) return '****';
+const maskCardNumber = (value) => {
+  const digits = (value || '').replace(/\D/g, '');
   const tail = digits.slice(-4).padStart(4, '*');
   return `**** **** **** ${tail}`;
 };
@@ -92,14 +91,21 @@ const passengerGroups = [
   ['infants', 'Infant'],
 ];
 
+const emptyTraveler = () => ({
+  firstName: '',
+  lastName: '',
+  dob: '',
+  passport: '',
+});
+
 const buildPassengerManifest = (passengers) => {
   const manifest = [];
-  passengerGroups.forEach(([key, label]) => {
-    const count = passengers[key] || 0;
+  passengerGroups.forEach(([groupKey, groupLabel]) => {
+    const count = passengers[groupKey] || 0;
     for (let i = 0; i < count; i += 1) {
       manifest.push({
-        id: `${key}-${i + 1}`,
-        label: `${label} ${i + 1}`,
+        id: `${groupKey}-${i + 1}`,
+        label: `${groupLabel} ${i + 1}`,
       });
     }
   });
@@ -121,19 +127,20 @@ const validatePassengerDetails = (passengerForm, manifest) => {
   }
 
   for (const traveler of manifest) {
-    const details = passengerForm.travelers[traveler.id] || {
-      firstName: '',
-      lastName: '',
-      dob: '',
-      passport: '',
-    };
-    if (!details.firstName.trim() || !details.lastName.trim() || !details.dob || !details.passport.trim()) {
+    const details = passengerForm.travelers[traveler.id] || emptyTraveler();
+    if (
+      !details.firstName.trim() ||
+      !details.lastName.trim() ||
+      !details.dob ||
+      !details.passport.trim()
+    ) {
       return `Complete details for ${traveler.label}.`;
     }
-    const dobDate = new Date(`${details.dob}T00:00:00`);
+
+    const dob = new Date(`${details.dob}T00:00:00`);
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    if (Number.isNaN(dobDate.getTime()) || dobDate >= today) {
+    if (Number.isNaN(dob.getTime()) || dob >= today) {
       return `Enter a valid date of birth for ${traveler.label}.`;
     }
   }
@@ -142,8 +149,8 @@ const validatePassengerDetails = (passengerForm, manifest) => {
 };
 
 const validatePaymentDetails = (paymentForm) => {
-  const cardNumber = paymentForm.cardNumber.replace(/\D/g, '');
-  if (cardNumber.length < 13 || cardNumber.length > 19) {
+  const cardDigits = paymentForm.cardNumber.replace(/\D/g, '');
+  if (cardDigits.length < 13 || cardDigits.length > 19) {
     return 'Enter a valid card number.';
   }
 
@@ -164,9 +171,8 @@ const validatePaymentDetails = (paymentForm) => {
   if (rawYear.length === 2) year += 2000;
 
   const now = new Date();
-  const currentMonth = now.getMonth() + 1;
   const currentYear = now.getFullYear();
-
+  const currentMonth = now.getMonth() + 1;
   if (year < currentYear || (year === currentYear && month < currentMonth)) {
     return 'Card expiry date is in the past.';
   }
@@ -230,6 +236,7 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
   const [selectedReturn, setSelectedReturn] = useState('');
   const [bookingMessage, setBookingMessage] = useState('');
   const [bookingRef, setBookingRef] = useState('');
+
   const [passengerForm, setPassengerForm] = useState({
     contactFirstName: '',
     contactLastName: '',
@@ -237,6 +244,7 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
     contactPhone: '',
     travelers: {},
   });
+
   const [paymentForm, setPaymentForm] = useState({
     cardName: '',
     cardNumber: '',
@@ -245,70 +253,71 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
     cvv: '',
     billingZip: '',
   });
-  const [sendingReceipt, setSendingReceipt] = useState(false);
 
   useEffect(() => {
     setSearch((prev) => {
-      const next = {};
+      const patch = {};
 
       if (prefillFrom && metroMap[prefillFrom] && prefillFrom !== prev.fromCode) {
-        next.fromCode = prefillFrom;
-        next.fromText = metroSearchLabel(prefillFrom);
+        patch.fromCode = prefillFrom;
+        patch.fromText = metroSearchLabel(prefillFrom);
       }
 
       if (prefillTo && metroMap[prefillTo] && prefillTo !== prev.toCode) {
-        next.toCode = prefillTo;
-        next.toText = metroSearchLabel(prefillTo);
+        patch.toCode = prefillTo;
+        patch.toText = metroSearchLabel(prefillTo);
       }
 
       if (preferredAircraft && preferredAircraft !== prev.preferredAircraft) {
-        next.preferredAircraft = preferredAircraft;
+        patch.preferredAircraft = preferredAircraft;
       }
 
-      return Object.keys(next).length ? { ...prev, ...next } : prev;
+      return Object.keys(patch).length ? { ...prev, ...patch } : prev;
     });
   }, [prefillFrom, prefillTo, preferredAircraft]);
 
   const sortedMetros = useMemo(() => [...metros].sort((a, b) => a.city.localeCompare(b.city)), []);
-
-  const passengerManifest = useMemo(() => buildPassengerManifest(search.passengers), [search.passengers]);
+  const isRoundTrip = search.tripType === 'Round-trip';
+  const manifest = useMemo(() => buildPassengerManifest(search.passengers), [search.passengers]);
 
   useEffect(() => {
     setPassengerForm((prev) => {
       const nextTravelers = {};
-      passengerManifest.forEach((traveler) => {
-        nextTravelers[traveler.id] = prev.travelers[traveler.id] || {
-          firstName: '',
-          lastName: '',
-          dob: '',
-          passport: '',
-        };
+      manifest.forEach((traveler) => {
+        nextTravelers[traveler.id] = prev.travelers[traveler.id] || emptyTraveler();
       });
       return {
         ...prev,
         travelers: nextTravelers,
       };
     });
-  }, [passengerManifest]);
+  }, [manifest]);
 
-  const isRoundTrip = search.tripType === 'Round-trip';
-  const outboundFlight = results?.outboundOptions.find((option) => option.id === selectedOutbound);
-  const returnFlight = results?.returnOptions.find((option) => option.id === selectedReturn);
+  const outbound = results?.outboundOptions.find((option) => option.id === selectedOutbound);
+  const inbound = results?.returnOptions.find((option) => option.id === selectedReturn);
 
   const selectionEndStep = isRoundTrip ? 2 : 1;
-  const passengerInfoStep = selectionEndStep + 1;
+  const passengerStep = selectionEndStep + 1;
   const paymentStep = selectionEndStep + 2;
   const summaryStep = selectionEndStep + 3;
 
-  const stepperSteps = isRoundTrip
+  const steps = isRoundTrip
     ? ['Select Departure Flight', 'Select Return Flight', 'Passenger Info', 'Payment', 'Review & Book']
     : ['Select Departure Flight', 'Passenger Info', 'Payment', 'Review & Book'];
 
-  const isSummaryVisible = flowStep === summaryStep;
-  const tripTotal = (outboundFlight?.subtotal || 0) + (returnFlight?.subtotal || 0);
+  const isSummary = flowStep === summaryStep;
+  const total = (outbound?.subtotal || 0) + (inbound?.subtotal || 0);
 
-  const updateSearch = (patch) => {
-    setSearch((prev) => ({ ...prev, ...patch }));
+  const updateSearch = (patch) => setSearch((prev) => ({ ...prev, ...patch }));
+
+  const resetAfterSearch = (freshResults) => {
+    setResults(freshResults);
+    setFlowStep(1);
+    setSelectedOutbound('');
+    setSelectedReturn('');
+    setBookingMessage('');
+    setBookingRef('');
+    setError('');
   };
 
   const onSubmit = (event) => {
@@ -327,24 +336,16 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
       return;
     }
 
-    const freshResults = generateSearchResults(search);
-    setResults(freshResults);
-    setError('');
-    setBookingMessage('');
-    setBookingRef('');
-    setFlowStep(1);
-    setSelectedOutbound('');
-    setSelectedReturn('');
+    resetAfterSearch(generateSearchResults(search));
     saveLastSearch(search);
   };
 
   const onContinue = () => {
     if (flowStep === 1 && !selectedOutbound) return;
-
     if (isRoundTrip && flowStep === 2 && !selectedReturn) return;
 
-    if (flowStep === passengerInfoStep) {
-      const passengerError = validatePassengerDetails(passengerForm, passengerManifest);
+    if (flowStep === passengerStep) {
+      const passengerError = validatePassengerDetails(passengerForm, manifest);
       if (passengerError) {
         setError(passengerError);
         return;
@@ -363,96 +364,18 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
     setFlowStep((prev) => prev + 1);
   };
 
-  const goBack = () => {
+  const onBack = () => {
     setError('');
     setBookingMessage('');
     setFlowStep((prev) => Math.max(1, prev - 1));
   };
 
-  const buildReceiptText = (reference) => {
-    const lines = [
-      `AERA Receipt / E-Ticket`,
-      `Booking reference: ${reference}`,
-      `Contact: ${passengerForm.contactFirstName} ${passengerForm.contactLastName}`,
-      `Route: ${metroMap[search.fromCode]?.city || search.fromCode} -> ${metroMap[search.toCode]?.city || search.toCode}`,
-      `Passengers: ${passengerSummary(search.passengers)}`,
-      `Cabin requested: ${search.cabin}`,
-      `Payment method: ${maskCardNumber(paymentForm.cardNumber)}`,
-      `Total paid: ${formatCurrency(tripTotal)}`,
-      '',
-      'Traveler details:',
-      ...passengerManifest.map((traveler) => {
-        const details = passengerForm.travelers[traveler.id] || {};
-        return `${traveler.label}: ${details.firstName || ''} ${details.lastName || ''} | DOB ${details.dob || ''} | Passport ${details.passport || ''}`;
-      }),
-    ];
-    return lines.join('\n');
-  };
-
-  const trySendReceiptByEmailJs = async (reference, receiptText) => {
-    const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'service_594zf7a';
-    const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'template_8qlmp3l';
-    const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'xCEM1IkiAk_f8lm6A';
-
-    if (!serviceId || !templateId || !publicKey) return false;
-
-    const payload = {
-      service_id: serviceId,
-      template_id: templateId,
-      user_id: publicKey,
-      template_params: {
-        to_email: passengerForm.contactEmail.trim(),
-        passenger_name: `${passengerForm.contactFirstName} ${passengerForm.contactLastName}`,
-        booking_reference: reference,
-        route: `${metroMap[search.fromCode]?.city || search.fromCode} -> ${metroMap[search.toCode]?.city || search.toCode}`,
-        trip_total: formatCurrency(tripTotal),
-        receipt_text: receiptText,
-      },
-    };
-
-    const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-
-    return response.ok;
-  };
-
-  const openMailDraft = (reference, receiptText) => {
-    const subject = encodeURIComponent(`AERA Receipt ${reference}`);
-    const body = encodeURIComponent(receiptText);
-    const mailto = `mailto:${encodeURIComponent(passengerForm.contactEmail.trim())}?subject=${subject}&body=${body}`;
-    window.location.href = mailto;
-  };
-
-  const onBook = async () => {
+  const onConfirmBooking = () => {
     const reference = bookingRef || makeBookingReference();
-    const receiptText = buildReceiptText(reference);
-
-    setSendingReceipt(true);
-    try {
-      const sent = await trySendReceiptByEmailJs(reference, receiptText);
-      setBookingRef(reference);
-      if (sent) {
-        setBookingMessage(
-          `Payment authorized on ${maskCardNumber(paymentForm.cardNumber)}. Booking ${reference} confirmed and receipt emailed to ${passengerForm.contactEmail}.`,
-        );
-      } else {
-        openMailDraft(reference, receiptText);
-        setBookingMessage(
-          `Payment authorized on ${maskCardNumber(paymentForm.cardNumber)}. Booking ${reference} confirmed. Email service not configured, so a receipt draft was opened in your mail app.`,
-        );
-      }
-    } catch {
-      openMailDraft(reference, receiptText);
-      setBookingRef(reference);
-      setBookingMessage(
-        `Payment authorized on ${maskCardNumber(paymentForm.cardNumber)}. Booking ${reference} confirmed. Could not auto-send email, so a receipt draft was opened in your mail app.`,
-      );
-    } finally {
-      setSendingReceipt(false);
-    }
+    setBookingRef(reference);
+    setBookingMessage(
+      `Payment authorized on ${maskCardNumber(paymentForm.cardNumber)}. Booking ${reference} confirmed. Receipt generated (demo).`,
+    );
   };
 
   const updateTraveler = (travelerId, patch) => {
@@ -461,12 +384,7 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
       travelers: {
         ...prev.travelers,
         [travelerId]: {
-          ...(prev.travelers[travelerId] || {
-            firstName: '',
-            lastName: '',
-            dob: '',
-            passport: '',
-          }),
+          ...(prev.travelers[travelerId] || emptyTraveler()),
           ...patch,
         },
       },
@@ -565,7 +483,7 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
 
       {results ? (
         <div className="results-wrap">
-          <Stepper steps={stepperSteps} currentStep={flowStep} />
+          <Stepper steps={steps} currentStep={flowStep} />
 
           {flowStep === 1 ? (
             <div className="step-panel">
@@ -602,7 +520,7 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
                 ))}
               </div>
               <div className="step-actions">
-                <button type="button" className="secondary-btn" onClick={goBack}>
+                <button type="button" className="secondary-btn" onClick={onBack}>
                   Back
                 </button>
                 <button type="button" className="primary-btn" onClick={onContinue} disabled={!selectedReturn}>
@@ -612,9 +530,10 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
             </div>
           ) : null}
 
-          {flowStep === passengerInfoStep ? (
+          {flowStep === passengerStep ? (
             <div className="step-panel summary-panel">
               <h3>Passenger Information</h3>
+
               <article className="summary-box surface-card booking-form-section">
                 <h4>Primary Contact</h4>
                 <div className="detail-grid contact-grid">
@@ -629,6 +548,7 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
                       }
                     />
                   </label>
+
                   <label className="booking-field" htmlFor="contactLastName">
                     Last name
                     <input
@@ -640,6 +560,7 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
                       }
                     />
                   </label>
+
                   <label className="booking-field" htmlFor="contactEmail">
                     Email
                     <input
@@ -652,6 +573,7 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
                       }
                     />
                   </label>
+
                   <label className="booking-field" htmlFor="contactPhone">
                     Phone
                     <input
@@ -669,9 +591,10 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
               <article className="summary-box surface-card booking-form-section">
                 <h4>Traveler Details</h4>
                 <div className="detail-grid traveler-grid">
-                  {passengerManifest.map((traveler) => (
+                  {manifest.map((traveler) => (
                     <div className="traveler-row" key={traveler.id}>
                       <p className="traveler-label">{traveler.label}</p>
+
                       <label className="booking-field" htmlFor={`${traveler.id}-first`}>
                         First name
                         <input
@@ -681,6 +604,7 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
                           onChange={(event) => updateTraveler(traveler.id, { firstName: event.target.value })}
                         />
                       </label>
+
                       <label className="booking-field" htmlFor={`${traveler.id}-last`}>
                         Last name
                         <input
@@ -690,6 +614,7 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
                           onChange={(event) => updateTraveler(traveler.id, { lastName: event.target.value })}
                         />
                       </label>
+
                       <label className="booking-field" htmlFor={`${traveler.id}-dob`}>
                         Date of birth
                         <input
@@ -700,13 +625,16 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
                           onChange={(event) => updateTraveler(traveler.id, { dob: event.target.value })}
                         />
                       </label>
+
                       <label className="booking-field" htmlFor={`${traveler.id}-passport`}>
                         Passport number
                         <input
                           id={`${traveler.id}-passport`}
                           className="field"
                           value={passengerForm.travelers[traveler.id]?.passport || ''}
-                          onChange={(event) => updateTraveler(traveler.id, { passport: event.target.value.toUpperCase() })}
+                          onChange={(event) =>
+                            updateTraveler(traveler.id, { passport: event.target.value.toUpperCase() })
+                          }
                         />
                       </label>
                     </div>
@@ -715,7 +643,7 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
               </article>
 
               <div className="step-actions">
-                <button type="button" className="secondary-btn" onClick={goBack}>
+                <button type="button" className="secondary-btn" onClick={onBack}>
                   Back
                 </button>
                 <button type="button" className="primary-btn" onClick={onContinue}>
@@ -728,6 +656,7 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
           {flowStep === paymentStep ? (
             <div className="step-panel summary-panel">
               <h3>Payment</h3>
+
               <article className="summary-box surface-card booking-form-section">
                 <h4>Card Details (Demo)</h4>
                 <div className="detail-grid payment-grid">
@@ -800,7 +729,7 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
               </article>
 
               <div className="step-actions">
-                <button type="button" className="secondary-btn" onClick={goBack}>
+                <button type="button" className="secondary-btn" onClick={onBack}>
                   Back
                 </button>
                 <button type="button" className="primary-btn" onClick={onContinue}>
@@ -810,10 +739,11 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
             </div>
           ) : null}
 
-          {isSummaryVisible ? (
+          {isSummary ? (
             <div className="step-panel summary-panel">
               <h3>Trip Summary</h3>
               {bookingMessage ? <p className="booking-success">{bookingMessage}</p> : null}
+
               <div className="summary-grid">
                 <article className="summary-box surface-card">
                   <h4>Passengers</h4>
@@ -827,22 +757,22 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
 
                 <article className="summary-box surface-card">
                   <h4>Outbound</h4>
-                  {outboundFlight ? (
+                  {outbound ? (
                     <>
-                      <p>{outboundFlight.itineraryLine}</p>
-                      <AirportCodeTrail itineraryCodes={outboundFlight.itineraryCodes} />
+                      <p>{outbound.itineraryLine}</p>
+                      <AirportCodeTrail itineraryCodes={outbound.itineraryCodes} />
                       <p>
-                        {outboundFlight.flightNumber} | {outboundFlight.aircraftName}
+                        {outbound.flightNumber} | {outbound.aircraftName}
                       </p>
                       <p>
-                        Cabin: {outboundFlight.offeredCabinSummary}
-                        {outboundFlight.requestedCabin !== outboundFlight.offeredCabinSummary
-                          ? ` (requested: ${outboundFlight.requestedCabin})`
+                        Cabin: {outbound.offeredCabinSummary}
+                        {outbound.requestedCabin !== outbound.offeredCabinSummary
+                          ? ` (requested: ${outbound.requestedCabin})`
                           : ''}
                       </p>
-                      {outboundFlight.segments?.length > 1 ? (
+                      {outbound.segments?.length > 1 ? (
                         <div className="summary-segment-aircraft">
-                          {outboundFlight.segments.map((segment) => (
+                          {outbound.segments.map((segment) => (
                             <p key={`out-${segment.fromCode}-${segment.toCode}`}>
                               {segment.fromAirport}-{segment.toAirport}: {segment.aircraftName} ({segment.offeredCabinClass})
                             </p>
@@ -850,12 +780,12 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
                         </div>
                       ) : null}
                       <p>
-                        {outboundFlight.departureTime} → {outboundFlight.arrivalTime}
+                        {outbound.departureTime} → {outbound.arrivalTime}
                       </p>
                       <p>
-                        {outboundFlight.departureTimeZone} / {outboundFlight.arrivalTimeZone}
+                        {outbound.departureTimeZone} / {outbound.arrivalTimeZone}
                       </p>
-                      <strong>{formatCurrency(outboundFlight.subtotal)}</strong>
+                      <strong>{formatCurrency(outbound.subtotal)}</strong>
                     </>
                   ) : (
                     <p>No outbound selected.</p>
@@ -865,22 +795,22 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
                 {isRoundTrip ? (
                   <article className="summary-box surface-card">
                     <h4>Return</h4>
-                    {returnFlight ? (
+                    {inbound ? (
                       <>
-                        <p>{returnFlight.itineraryLine}</p>
-                        <AirportCodeTrail itineraryCodes={returnFlight.itineraryCodes} />
+                        <p>{inbound.itineraryLine}</p>
+                        <AirportCodeTrail itineraryCodes={inbound.itineraryCodes} />
                         <p>
-                          {returnFlight.flightNumber} | {returnFlight.aircraftName}
+                          {inbound.flightNumber} | {inbound.aircraftName}
                         </p>
                         <p>
-                          Cabin: {returnFlight.offeredCabinSummary}
-                          {returnFlight.requestedCabin !== returnFlight.offeredCabinSummary
-                            ? ` (requested: ${returnFlight.requestedCabin})`
+                          Cabin: {inbound.offeredCabinSummary}
+                          {inbound.requestedCabin !== inbound.offeredCabinSummary
+                            ? ` (requested: ${inbound.requestedCabin})`
                             : ''}
                         </p>
-                        {returnFlight.segments?.length > 1 ? (
+                        {inbound.segments?.length > 1 ? (
                           <div className="summary-segment-aircraft">
-                            {returnFlight.segments.map((segment) => (
+                            {inbound.segments.map((segment) => (
                               <p key={`ret-${segment.fromCode}-${segment.toCode}`}>
                                 {segment.fromAirport}-{segment.toAirport}: {segment.aircraftName} ({segment.offeredCabinClass})
                               </p>
@@ -888,12 +818,12 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
                           </div>
                         ) : null}
                         <p>
-                          {returnFlight.departureTime} → {returnFlight.arrivalTime}
+                          {inbound.departureTime} → {inbound.arrivalTime}
                         </p>
                         <p>
-                          {returnFlight.departureTimeZone} / {returnFlight.arrivalTimeZone}
+                          {inbound.departureTimeZone} / {inbound.arrivalTimeZone}
                         </p>
-                        <strong>{formatCurrency(returnFlight.subtotal)}</strong>
+                        <strong>{formatCurrency(inbound.subtotal)}</strong>
                       </>
                     ) : (
                       <p>No return selected.</p>
@@ -907,13 +837,13 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
                     {metroMap[search.fromCode]?.city || search.fromCode} to {metroMap[search.toCode]?.city || search.toCode}
                   </p>
                   <p>Payment method: {maskCardNumber(paymentForm.cardNumber)}</p>
-                  <strong>{formatCurrency(tripTotal)}</strong>
+                  <strong>{formatCurrency(total)}</strong>
                   <div className="summary-actions">
-                    <button type="button" className="secondary-btn" onClick={goBack}>
+                    <button type="button" className="secondary-btn" onClick={onBack}>
                       Back
                     </button>
-                    <button type="button" className="primary-btn" onClick={onBook}>
-                      {sendingReceipt ? 'Confirming...' : 'Confirm & Pay'}
+                    <button type="button" className="primary-btn" onClick={onConfirmBooking}>
+                      Confirm & Pay
                     </button>
                   </div>
                 </article>
