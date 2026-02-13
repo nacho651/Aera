@@ -1,0 +1,80 @@
+.flight-card {
+  width: 100%;
+  border: 1px solid rgba(10, 31, 68, 0.12);
+  border-radius: var(--radius-md);
+  background: #fff;
+  padding: var(--space-2);
+  text-align: left;
+  cursor: pointer;
+  box-shadow: var(--shadow-soft);
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.flight-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(0, 116, 183, 0.35);
+}
+
+.flight-card.selected {
+  border-color: rgba(0, 116, 183, 0.6);
+  background: rgba(0, 161, 214, 0.08);
+}
+
+.flight-top {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.flight-top h4 {
+  font-size: 1.02rem;
+  line-height: 1.35;
+  margin-bottom: 4px;
+}
+
+.flight-top p {
+  color: rgba(10, 31, 68, 0.74);
+  font-size: 0.9rem;
+}
+
+.flight-time {
+  text-align: right;
+  min-width: 140px;
+}
+
+.flight-time strong {
+  display: block;
+  font-size: 1rem;
+}
+
+.flight-time span {
+  color: rgba(10, 31, 68, 0.7);
+  font-size: 0.9rem;
+}
+
+.flight-pricing {
+  margin-top: 14px;
+  display: grid;
+  gap: 4px;
+}
+
+.flight-pricing p {
+  font-size: 0.9rem;
+  color: rgba(10, 31, 68, 0.78);
+}
+
+.flight-pricing .flight-subtotal {
+  margin-top: 4px;
+  font-weight: 800;
+  color: var(--ink);
+}
+
+@media (max-width: 760px) {
+  .flight-top {
+    flex-direction: column;
+  }
+
+  .flight-time {
+    text-align: left;
+  }
+}
