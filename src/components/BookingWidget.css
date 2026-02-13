@@ -1,0 +1,236 @@
+.booking-widget {
+  padding: var(--space-3);
+}
+
+.booking-form {
+  display: grid;
+  gap: 10px;
+  align-items: end;
+}
+
+.booking-form.oneway {
+  grid-template-columns: minmax(160px, 1.25fr) minmax(160px, 1.25fr) 132px 118px 138px minmax(190px, 1.15fr) auto;
+}
+
+.booking-form.round {
+  grid-template-columns: minmax(145px, 1.2fr) minmax(145px, 1.2fr) 122px 112px 122px 128px minmax(186px, 1fr) auto;
+}
+
+.booking-field {
+  min-width: 0;
+}
+
+.booking-field,
+.booking-submit-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.booking-submit-cell {
+  align-items: flex-end;
+}
+
+.search-btn {
+  min-width: 132px;
+}
+
+.booking-tip {
+  margin-top: 10px;
+  color: rgba(10, 31, 68, 0.72);
+  font-size: 0.9rem;
+}
+
+.booking-error {
+  margin-top: 10px;
+  color: #a52439;
+  font-weight: 600;
+}
+
+.results-wrap {
+  margin-top: var(--space-4);
+  display: grid;
+  gap: var(--space-3);
+}
+
+.step-panel {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.step-panel h3 {
+  font-size: 1.3rem;
+}
+
+.flight-grid {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.step-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.step-actions button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2);
+}
+
+.summary-box {
+  padding: var(--space-2);
+  display: grid;
+  gap: 6px;
+}
+
+.summary-box h4 {
+  font-size: 1rem;
+}
+
+.summary-box p {
+  color: rgba(10, 31, 68, 0.78);
+}
+
+.airport-code-trail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+}
+
+.airport-link {
+  color: var(--blue);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.trail-arrow {
+  color: rgba(10, 31, 68, 0.55);
+  font-weight: 700;
+}
+
+.summary-box strong {
+  font-size: 1.2rem;
+}
+
+.total-box {
+  background: linear-gradient(145deg, rgba(0, 116, 183, 0.1), rgba(0, 161, 214, 0.09));
+}
+
+.summary-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 10px;
+}
+
+.booking-form-section {
+  gap: var(--space-2);
+}
+
+.detail-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.contact-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.traveler-grid {
+  grid-template-columns: 1fr;
+}
+
+.traveler-row {
+  display: grid;
+  grid-template-columns: 130px 1fr 1fr;
+  gap: 10px;
+  align-items: end;
+}
+
+.traveler-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: rgba(10, 31, 68, 0.84);
+  margin-bottom: 10px;
+}
+
+.payment-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.booking-success {
+  margin: 0;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0, 161, 214, 0.14);
+  border: 1px solid rgba(0, 116, 183, 0.26);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+@media (max-width: 1100px) {
+  .booking-form.oneway,
+  .booking-form.round {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .booking-submit-cell {
+    grid-column: span 4;
+  }
+}
+
+@media (max-width: 860px) {
+  .booking-widget {
+    padding: var(--space-2);
+  }
+
+  .booking-form.oneway,
+  .booking-form.round {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .booking-submit-cell {
+    grid-column: span 2;
+  }
+
+  .summary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .traveler-row {
+    grid-template-columns: 1fr;
+    align-items: stretch;
+  }
+}
+
+@media (max-width: 560px) {
+  .booking-form.oneway,
+  .booking-form.round {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-submit-cell {
+    grid-column: auto;
+    align-items: stretch;
+  }
+
+  .search-btn {
+    width: 100%;
+  }
+
+  .contact-grid,
+  .payment-grid {
+    grid-template-columns: 1fr;
+  }
+}

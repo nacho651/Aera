@@ -1,0 +1,136 @@
+import { fleetImageBySlug } from './imageAssets';
+
+export const fleet = [
+  {
+    slug: 'a320neo',
+    name: 'Airbus A320neo',
+    marketingTitle: 'Smart short-haul comfort',
+    range_km: 6300,
+    seats: 180,
+    role: 'Short-haul and regional trunk routes',
+    highlights: [
+      'Fuel-efficient next-gen engines',
+      'Balanced layout for high-frequency schedules',
+      'Modern LED mood lighting and quieter cabin',
+    ],
+    specs: {
+      wingspan: '35.8 m',
+      engines: '2 x CFM LEAP-1A',
+      cruise: 'Mach 0.78',
+      cabin: '2-class, 180 seats',
+      cargo: 'Up to 37.4 m3 lower deck',
+    },
+    cabinExperience: [
+      'Wider seats in key rows with ergonomic headrests',
+      'Large overhead bins for quick boarding',
+      'Low-noise interior tuned for short flights',
+    ],
+    image: fleetImageBySlug.a320neo,
+  },
+  {
+    slug: 'a321xlr',
+    name: 'Airbus A321XLR',
+    marketingTitle: 'Long-thin flexibility',
+    range_km: 8700,
+    seats: 195,
+    role: 'Long-thin transatlantic and secondary intercontinental routes',
+    highlights: [
+      'Extended range narrowbody operations',
+      'Premium-heavy cabin without widebody trip costs',
+      'Ideal for right-sized city pairs',
+    ],
+    specs: {
+      wingspan: '35.8 m',
+      engines: '2 x Pratt & Whitney GTF',
+      cruise: 'Mach 0.79',
+      cabin: '3-class, 195 seats',
+      cargo: 'Up to 51.7 m3 lower deck',
+    },
+    cabinExperience: [
+      'Quiet-zone insulation around premium rows',
+      'Individual power and USB-C at every seat',
+      'Enhanced galley setup for upgraded meal service',
+    ],
+    image: fleetImageBySlug.a321xlr,
+  },
+  {
+    slug: 'b787',
+    name: 'Boeing 787',
+    marketingTitle: 'Intercontinental efficiency',
+    range_km: 14140,
+    seats: 290,
+    role: 'High-demand long-haul and key intercontinental links',
+    highlights: [
+      'Lower cabin altitude and humidity for comfort',
+      'Large dimmable windows',
+      'Efficient long-range performance',
+    ],
+    specs: {
+      wingspan: '60.1 m',
+      engines: '2 x GEnx / Rolls-Royce Trent 1000',
+      cruise: 'Mach 0.85',
+      cabin: '4-class, 290 seats',
+      cargo: 'Up to 152 m3 lower deck',
+    },
+    cabinExperience: [
+      'Turbulence-dampening cabin feel with advanced flex wing',
+      'Full lie-flat Business suites on flagship sectors',
+      'Wide Premium Economy seats with leg-rest support',
+    ],
+    image: fleetImageBySlug.b787,
+  },
+  {
+    slug: 'a350xwb',
+    name: 'Airbus A350 XWB',
+    marketingTitle: 'Flagship long-haul refinement',
+    range_km: 15000,
+    seats: 325,
+    role: 'Flagship intercontinental routes and long-range premium markets',
+    highlights: [
+      'Ultra-quiet composite airframe',
+      'Best-in-class efficiency for long sectors',
+      'Spacious 4-cabin premium layout',
+    ],
+    specs: {
+      wingspan: '64.8 m',
+      engines: '2 x Rolls-Royce Trent XWB',
+      cruise: 'Mach 0.85',
+      cabin: '4-class, 325 seats',
+      cargo: 'Up to 170 m3 lower deck',
+    },
+    cabinExperience: [
+      'Ambient lighting scenarios for every flight phase',
+      'Quiet First and Business zones with added privacy',
+      'Smooth ride controls tuned for overnight missions',
+    ],
+    image: fleetImageBySlug.a350xwb,
+  },
+  {
+    slug: 'b777x',
+    name: 'Boeing 777X',
+    marketingTitle: 'Ultra-long-range flagship',
+    range_km: 16170,
+    seats: 380,
+    role: 'Ultra-long-haul and premium trunk corridors',
+    highlights: [
+      'Folding wingtips for airport compatibility',
+      'High-capacity premium cabin potential',
+      'Designed for global trunk economics',
+    ],
+    specs: {
+      wingspan: '71.8 m (folding tips)',
+      engines: '2 x GE9X',
+      cruise: 'Mach 0.84',
+      cabin: '4-class, 380 seats',
+      cargo: 'Up to 190 m3 lower deck',
+    },
+    cabinExperience: [
+      'Extra-wide cabin enabling generous premium suites',
+      'Improved pressurization and humidity for long sectors',
+      'Large social lounge area on select layouts',
+    ],
+    image: fleetImageBySlug.b777x,
+  },
+];
+
+export const fleetMap = Object.fromEntries(fleet.map((aircraft) => [aircraft.slug, aircraft]));
