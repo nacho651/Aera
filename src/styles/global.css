@@ -14,6 +14,11 @@ body {
   color: var(--ink);
   background: var(--paper);
   line-height: 1.45;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+body[data-theme='dark'] {
+  color-scheme: dark;
 }
 
 a {
@@ -67,10 +72,10 @@ textarea {
 }
 
 .surface-card {
-  background: #fff;
+  background: var(--surface);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-soft);
-  border: 1px solid rgba(10, 31, 68, 0.08);
+  border: 1px solid var(--surface-border);
 }
 
 .primary-btn,
@@ -95,9 +100,9 @@ textarea {
 }
 
 .secondary-btn {
-  background: #fff;
+  background: var(--surface);
   color: var(--ink);
-  border: 1px solid rgba(10, 31, 68, 0.18);
+  border: 1px solid rgba(var(--ink-rgb), 0.18);
 }
 
 .field,
@@ -105,8 +110,8 @@ select,
 textarea {
   width: 100%;
   border-radius: 12px;
-  border: 1px solid rgba(10, 31, 68, 0.18);
-  background: #fff;
+  border: 1px solid rgba(var(--ink-rgb), 0.18);
+  background: var(--input-bg);
   padding: 11px 12px;
   color: var(--ink);
 }
@@ -131,7 +136,7 @@ textarea:focus {
 }
 
 .section-subtitle {
-  color: rgba(10, 31, 68, 0.75);
+  color: rgba(var(--ink-rgb), 0.75);
   max-width: 660px;
 }
 

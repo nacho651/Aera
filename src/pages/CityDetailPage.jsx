@@ -168,7 +168,7 @@ const CityDetailPage = () => {
             {routes.map((route) => (
               <div className="route-chip route-card" key={route.destinationCode}>
                 <h4>
-                  {city.name} ({city.airportCode}) -> {route.destinationName} ({route.destinationAirport})
+                  {city.name} ({city.airportCode}) {'→'} {route.destinationName} ({route.destinationAirport})
                 </h4>
                 <p>
                   Typical aircraft: <strong>{route.aircraft.name}</strong>

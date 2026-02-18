@@ -2,16 +2,23 @@
 
 :root {
   --ink: #0a1f44;
+  --ink-rgb: 10, 31, 68;
   --blue: #0074b7;
   --cyan: #00a1d6;
   --paper: #f5f7fa;
+  --surface: #ffffff;
+  --surface-alt: #f9fbff;
+  --input-bg: #ffffff;
+  --header-bg: rgba(245, 247, 250, 0.92);
+  --header-border: rgba(var(--ink-rgb), 0.1);
+  --surface-border: rgba(var(--ink-rgb), 0.08);
 
   --radius-sm: 10px;
   --radius-md: 16px;
   --radius-lg: 24px;
 
-  --shadow-soft: 0 10px 30px rgba(10, 31, 68, 0.08);
-  --shadow-lift: 0 18px 44px rgba(10, 31, 68, 0.15);
+  --shadow-soft: 0 10px 30px rgba(var(--ink-rgb), 0.08);
+  --shadow-lift: 0 18px 44px rgba(var(--ink-rgb), 0.15);
 
   --space-1: 8px;
   --space-2: 16px;
@@ -22,4 +29,18 @@
   --space-8: 64px;
 
   --max-width: 1200px;
+}
+
+body[data-theme='dark'] {
+  --ink: #e8eefb;
+  --ink-rgb: 232, 238, 251;
+  --paper: #081225;
+  --surface: #0e1b33;
+  --surface-alt: #12213c;
+  --input-bg: #0d1a30;
+  --header-bg: rgba(7, 18, 37, 0.92);
+  --header-border: rgba(168, 195, 255, 0.28);
+  --surface-border: rgba(168, 195, 255, 0.22);
+  --shadow-soft: 0 12px 30px rgba(2, 8, 18, 0.6);
+  --shadow-lift: 0 22px 44px rgba(2, 8, 18, 0.72);
 }

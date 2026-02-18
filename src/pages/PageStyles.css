@@ -9,7 +9,7 @@
 }
 
 .page-heading p {
-  color: rgba(10, 31, 68, 0.76);
+  color: rgba(var(--ink-rgb), 0.76);
   max-width: 760px;
 }
 
@@ -47,7 +47,7 @@
 
 .hero-copy p {
   max-width: 560px;
-  color: rgba(10, 31, 68, 0.78);
+  color: rgba(var(--ink-rgb), 0.78);
 }
 
 .hero-actions {
@@ -78,7 +78,7 @@
 
 .destination-feature p,
 .destination-feature span {
-  color: rgba(10, 31, 68, 0.72);
+  color: rgba(var(--ink-rgb), 0.72);
 }
 
 .home-cities-grid {
@@ -96,7 +96,7 @@
 }
 
 .home-city-card p {
-  color: rgba(10, 31, 68, 0.72);
+  color: rgba(var(--ink-rgb), 0.72);
   font-size: 0.9rem;
 }
 
@@ -119,7 +119,7 @@
 }
 
 .fleet-mini-card p {
-  color: rgba(10, 31, 68, 0.74);
+  color: rgba(var(--ink-rgb), 0.74);
   font-size: 0.9rem;
 }
 
@@ -140,7 +140,7 @@
 }
 
 .why-card p {
-  color: rgba(10, 31, 68, 0.72);
+  color: rgba(var(--ink-rgb), 0.72);
 }
 
 .form-card {
@@ -178,7 +178,7 @@
 }
 
 .booking-found-card > div > p {
-  color: rgba(10, 31, 68, 0.72);
+  color: rgba(var(--ink-rgb), 0.72);
 }
 
 .booking-found-grid {
@@ -197,7 +197,7 @@
   padding: var(--space-4);
   background:
     radial-gradient(circle at top right, rgba(0, 161, 214, 0.2), transparent 58%),
-    linear-gradient(145deg, rgba(0, 116, 183, 0.12), rgba(10, 31, 68, 0.05));
+    linear-gradient(145deg, rgba(0, 116, 183, 0.12), rgba(var(--ink-rgb), 0.05));
   margin-bottom: var(--space-4);
 }
 
@@ -207,7 +207,7 @@
 }
 
 .cities-hero p {
-  color: rgba(10, 31, 68, 0.78);
+  color: rgba(var(--ink-rgb), 0.78);
   max-width: 760px;
 }
 
@@ -230,7 +230,7 @@
 }
 
 .city-overview-card p {
-  color: rgba(10, 31, 68, 0.75);
+  color: rgba(var(--ink-rgb), 0.75);
 }
 
 .city-overview-card .primary-btn {
@@ -277,7 +277,7 @@
 
 .city-about-panel p {
   max-width: 860px;
-  color: rgba(10, 31, 68, 0.8);
+  color: rgba(var(--ink-rgb), 0.8);
 }
 
 .city-info-grid {
@@ -294,7 +294,7 @@
 }
 
 .city-info-panel p {
-  color: rgba(10, 31, 68, 0.76);
+  color: rgba(var(--ink-rgb), 0.76);
 }
 
 .city-routes-panel {
@@ -344,7 +344,7 @@
 }
 
 .city-aircraft-card p {
-  color: rgba(10, 31, 68, 0.75);
+  color: rgba(var(--ink-rgb), 0.75);
   font-size: 0.92rem;
 }
 
@@ -368,7 +368,7 @@
 }
 
 .city-cta-panel p {
-  color: rgba(10, 31, 68, 0.77);
+  color: rgba(var(--ink-rgb), 0.77);
 }
 
 .experience-hero,
@@ -434,7 +434,7 @@
 }
 
 .fleet-card p {
-  color: rgba(10, 31, 68, 0.74);
+  color: rgba(var(--ink-rgb), 0.74);
 }
 
 .fleet-card .primary-btn {
@@ -450,7 +450,7 @@
 }
 
 .fleet-detail-hero p {
-  color: rgba(10, 31, 68, 0.76);
+  color: rgba(var(--ink-rgb), 0.76);
 }
 
 .fleet-detail-actions {
@@ -481,14 +481,14 @@
 .spec-table th,
 .spec-table td {
   padding: 8px 0;
-  border-bottom: 1px solid rgba(10, 31, 68, 0.1);
+  border-bottom: 1px solid rgba(var(--ink-rgb), 0.1);
   text-align: left;
 }
 
 .spec-table th {
   font-size: 0.84rem;
   text-transform: capitalize;
-  color: rgba(10, 31, 68, 0.65);
+  color: rgba(var(--ink-rgb), 0.65);
   width: 34%;
 }
 
@@ -530,7 +530,7 @@
 }
 
 .route-chip {
-  border: 1px solid rgba(10, 31, 68, 0.11);
+  border: 1px solid rgba(var(--ink-rgb), 0.11);
   border-radius: 12px;
   padding: 10px;
   background: rgba(0, 161, 214, 0.06);
@@ -539,7 +539,7 @@
 }
 
 .route-chip span {
-  color: rgba(10, 31, 68, 0.65);
+  color: rgba(var(--ink-rgb), 0.65);
   font-size: 0.88rem;
 }
 
@@ -555,8 +555,8 @@
 }
 
 .tab-btn {
-  border: 1px solid rgba(10, 31, 68, 0.16);
-  background: #fff;
+  border: 1px solid rgba(var(--ink-rgb), 0.16);
+  background: var(--surface);
   border-radius: 999px;
   padding: 8px 13px;
   font-weight: 700;
@@ -581,9 +581,9 @@
 }
 
 .destination-item {
-  border: 1px solid rgba(10, 31, 68, 0.12);
+  border: 1px solid rgba(var(--ink-rgb), 0.12);
   border-radius: 10px;
-  background: #fff;
+  background: var(--surface);
   padding: 10px 12px;
   text-align: left;
   font-weight: 600;
@@ -602,7 +602,7 @@
 }
 
 .destination-detail p {
-  color: rgba(10, 31, 68, 0.74);
+  color: rgba(var(--ink-rgb), 0.74);
 }
 
 .destination-detail h4 {
@@ -615,13 +615,13 @@
 }
 
 .duration-chip {
-  border: 1px solid rgba(10, 31, 68, 0.12);
+  border: 1px solid rgba(var(--ink-rgb), 0.12);
   border-radius: 10px;
   padding: 10px;
   display: flex;
   justify-content: space-between;
   gap: var(--space-2);
-  background: rgba(255, 255, 255, 0.7);
+  background: var(--surface-alt);
 }
 
 .duration-chip span {
@@ -631,13 +631,13 @@
 .map-placeholder {
   margin-top: 12px;
   border-radius: 16px;
-  border: 1px solid rgba(10, 31, 68, 0.12);
+  border: 1px solid rgba(var(--ink-rgb), 0.12);
   min-height: 180px;
   display: grid;
   place-items: center;
   background:
     linear-gradient(130deg, rgba(0, 116, 183, 0.13), rgba(0, 161, 214, 0.18)),
-    repeating-linear-gradient(45deg, rgba(10, 31, 68, 0.06), rgba(10, 31, 68, 0.06) 12px, transparent 12px, transparent 24px);
+    repeating-linear-gradient(45deg, rgba(var(--ink-rgb), 0.06), rgba(var(--ink-rgb), 0.06) 12px, transparent 12px, transparent 24px);
   position: relative;
   overflow: hidden;
 }
@@ -646,7 +646,7 @@
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(var(--ink-rgb), 0.35);
   filter: blur(34px);
   position: absolute;
 }
@@ -666,7 +666,7 @@
 
 .social-links a {
   padding: 8px 12px;
-  border: 1px solid rgba(10, 31, 68, 0.14);
+  border: 1px solid rgba(var(--ink-rgb), 0.14);
   border-radius: 999px;
   font-weight: 600;
 }

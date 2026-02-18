@@ -39,7 +39,7 @@
 
 .booking-tip {
   margin-top: 10px;
-  color: rgba(10, 31, 68, 0.72);
+  color: rgba(var(--ink-rgb), 0.72);
   font-size: 0.9rem;
 }
 
@@ -97,7 +97,7 @@
 }
 
 .summary-box p {
-  color: rgba(10, 31, 68, 0.78);
+  color: rgba(var(--ink-rgb), 0.78);
 }
 
 .airport-code-trail {
@@ -116,7 +116,7 @@
 }
 
 .trail-arrow {
-  color: rgba(10, 31, 68, 0.55);
+  color: rgba(var(--ink-rgb), 0.55);
   font-weight: 700;
 }
 
@@ -161,7 +161,7 @@
 .traveler-label {
   font-size: 0.85rem;
   font-weight: 700;
-  color: rgba(10, 31, 68, 0.84);
+  color: rgba(var(--ink-rgb), 0.84);
   margin-bottom: 10px;
 }
 

@@ -13,8 +13,8 @@
 .pax-trigger {
   width: 100%;
   border-radius: 12px;
-  border: 1px solid rgba(10, 31, 68, 0.18);
-  background: #fff;
+  border: 1px solid rgba(var(--ink-rgb), 0.18);
+  background: var(--input-bg);
   padding: 11px 12px;
   text-align: left;
   color: var(--ink);
@@ -26,8 +26,8 @@
   top: calc(100% + 6px);
   right: 0;
   width: min(300px, 100vw - 48px);
-  background: #fff;
-  border: 1px solid rgba(10, 31, 68, 0.14);
+  background: var(--surface);
+  border: 1px solid rgba(var(--ink-rgb), 0.14);
   box-shadow: var(--shadow-soft);
   border-radius: var(--radius-md);
   padding: var(--space-2);
@@ -56,8 +56,8 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  border: 1px solid rgba(10, 31, 68, 0.2);
-  background: #fff;
+  border: 1px solid rgba(var(--ink-rgb), 0.2);
+  background: var(--surface);
   cursor: pointer;
   font-weight: 700;
 }
@@ -70,5 +70,5 @@
 .pax-rule {
   margin-top: 6px;
   font-size: 0.79rem;
-  color: rgba(10, 31, 68, 0.6);
+  color: rgba(var(--ink-rgb), 0.6);
 }
