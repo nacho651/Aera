@@ -16,7 +16,7 @@ const Header = () => (
     <div className="container header-inner">
       <NavLink to="/" className="brand" aria-label="AERA Home">
         <span className="brand-mark" aria-hidden="true">
-          A
+          <img src="/images/aera-logo.png" alt="" className="brand-mark-image" />
         </span>
         <span className="brand-name">AERA</span>
       </NavLink>
