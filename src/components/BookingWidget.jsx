@@ -13,43 +13,12 @@ import Stepper from './Stepper';
 import FlightCard from './FlightCard';
 import './BookingWidget.css';
 
-const LAST_SEARCH_KEY = 'aera:lastSearch';
-
 const isoDate = (date) => date.toISOString().slice(0, 10);
 
 const nextDays = (days) => {
   const date = new Date();
   date.setDate(date.getDate() + days);
   return isoDate(date);
-};
-
-const tryLoadLastSearch = () => {
-  try {
-    const raw = localStorage.getItem(LAST_SEARCH_KEY);
-    if (!raw) return null;
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-};
-
-const saveLastSearch = (search) => {
-  try {
-    localStorage.setItem(
-      LAST_SEARCH_KEY,
-      JSON.stringify({
-        fromCode: search.fromCode,
-        toCode: search.toCode,
-        departureDate: search.departureDate,
-        returnDate: search.returnDate,
-        tripType: search.tripType,
-        cabin: search.cabin,
-        passengers: search.passengers,
-      }),
-    );
-  } catch {
-    // Local storage is optional.
-  }
 };
 
 const resolveFromText = (text) => {
@@ -212,20 +181,19 @@ const AirportCodeTrail = ({ itineraryCodes = [] }) => (
 );
 
 const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '' }) => {
-  const cached = typeof window !== 'undefined' ? tryLoadLastSearch() : null;
-  const initialFromCode = metroMap[prefillFrom] ? prefillFrom : cached?.fromCode || '';
-  const initialToCode = metroMap[prefillTo] ? prefillTo : cached?.toCode || '';
+  const initialFromCode = metroMap[prefillFrom] ? prefillFrom : '';
+  const initialToCode = metroMap[prefillTo] ? prefillTo : '';
 
   const [search, setSearch] = useState(() => ({
     fromCode: initialFromCode,
     toCode: initialToCode,
     fromText: initialFromCode ? metroSearchLabel(initialFromCode) : '',
     toText: initialToCode ? metroSearchLabel(initialToCode) : '',
-    departureDate: cached?.departureDate || nextDays(14),
-    tripType: cached?.tripType || 'One-way',
-    returnDate: cached?.returnDate || nextDays(21),
-    cabin: cached?.cabin || 'Economy',
-    passengers: cached?.passengers || { adults: 1, teens: 0, children: 0, infants: 0 },
+    departureDate: nextDays(14),
+    tripType: 'One-way',
+    returnDate: nextDays(21),
+    cabin: 'Economy',
+    passengers: { adults: 1, teens: 0, children: 0, infants: 0 },
     preferredAircraft,
   }));
 
@@ -337,7 +305,6 @@ const BookingWidget = ({ preferredAircraft = '', prefillFrom = '', prefillTo = '
     }
 
     resetAfterSearch(generateSearchResults(search));
-    saveLastSearch(search);
   };
 
   const onContinue = () => {
