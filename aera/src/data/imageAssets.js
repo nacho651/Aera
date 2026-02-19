@@ -3,10 +3,10 @@ export const siteImagePaths = {
 };
 
 export const fleetImageBySlug = {
-  a320neo: '/images/a320neo.webp',
+  a320neo: '/images/a320neo.jpg',
   a321xlr: '/images/a321xlr.jpg',
   b787: '/images/b787.jpg',
-  a350xwb: '/images/a350xwb.webp',
+  a350xwb: '/images/a350xwb.jpg',
   b777x: '/images/b777x.jpg',
 };
 

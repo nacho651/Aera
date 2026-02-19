@@ -23,7 +23,7 @@
 
 .hero-grid {
   display: grid;
-  grid-template-columns: 1fr 1.05fr;
+  grid-template-columns: 0.95fr 1.25fr;
   align-items: center;
   gap: var(--space-4);
 }
@@ -60,6 +60,15 @@
 .hero-image-wrap {
   overflow: hidden;
   border-radius: var(--radius-lg);
+  min-height: clamp(320px, 52vh, 560px);
+}
+
+.hero-image-wrap img {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+  object-fit: cover;
+  object-position: center;
 }
 
 .destination-feature-grid {
@@ -703,6 +712,10 @@
   .booking-found-grid {
     grid-template-columns: 1fr;
   }
+
+  .hero-image-wrap {
+    min-height: 360px;
+  }
 }
 
 @media (max-width: 680px) {
@@ -718,5 +731,9 @@
   .city-routes-grid,
   .four-up-grid {
     grid-template-columns: 1fr;
+  }
+
+  .hero-image-wrap {
+    min-height: 280px;
   }
 }
